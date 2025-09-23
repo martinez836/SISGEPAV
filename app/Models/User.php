@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol_id',
+        'state_id',
     ];
 
     /**
@@ -44,5 +46,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function rol()
+    {
+        return $this->belongsTo(Rol::class, 'rol_id');
+    }
+
+    // Un usuario pertenece a un estado
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id');
+    }
+
+    // Un usuario tiene muchas colecciones (recolecciones)
+    public function collections()
+    {
+        return $this->hasMany(Batch::class, 'user_id');
     }
 }

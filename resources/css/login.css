@@ -1,0 +1,8 @@
+
+/* Fondo con patrones personalizados */
+.bg-pattern {
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(45, 80, 22, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(74, 222, 128, 0.04) 0%, transparent 50%);
+}

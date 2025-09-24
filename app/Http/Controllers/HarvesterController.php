@@ -35,6 +35,7 @@ class HarvesterController extends Controller
             'trayQuantity'=> 'required|numeric|min:1',
             'eggUnits'=> 'required|numeric|min:1|max:30',
             'totalEggs'=> 'required|numeric|min:1',
+            'farm_id' => 'required|exists:farms,id',
         ]);
         // guardar en la base de datos el registro
         Harvest::create($validacion);

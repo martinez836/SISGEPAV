@@ -19,7 +19,7 @@
 			<p class="text-gray-600 text-sm">Rol: Recolector</p>
 		</div>
 
-		<form method="POST" action="{{ route('harvest.store') }}" class="mt-8 space-y-6 animate-slide-up" style="animation-delay: 0.2s;">
+	<form method="POST" action="{{ route('harvester.store') }}" class="mt-8 space-y-6 animate-slide-up" style="animation-delay: 0.2s;">
 			@csrf
 			<div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
 				<div class="space-y-6">

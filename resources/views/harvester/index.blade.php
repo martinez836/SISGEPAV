@@ -14,17 +14,17 @@
         <div class="w-full md:w-1/2 space-y-8 md:space-y-0">
             @if(session('success'))
                 <div id="success-alert" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
-                    <p class="font-bold">¡Chévere!</p>
+                    <p class="font-bold">¡Acción Completada!</p>
                     <p>{{ session('success') }}</p>
                 </div>
             @endif
 
             @if(isset($dailyBatch))
-                <form method="POST" action="{{ route('harvester.store') }}" class="space-y-6">
+                <form method="POST" id="harvest-form" action="{{ route('harvester.store') }}" class="space-y-6">
                     @csrf
                     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
                         <div class="text-center mb-6">
-                            <h3 class="text-2xl font-bold text-gray-900">Registrar Recolección</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">Recolección</h3>
                         </div>
                         <div class="space-y-6">
                             <div>
@@ -63,8 +63,11 @@
                             </div>
                             
                             <div class="flex justify-end">
-                                <button type="submit" class="bg-gradient-to-r from-farm-orange to-farm-yellow hover:from-farm-orange hover:to-farm-light-green text-white font-bold py-2 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200">
-                                    Registrar Recolección
+                                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent
+                                text-sm font-medium rounded-xl text-white bg-gradient-to-r from-farm-green to-farm-light-green
+                                hover:from-farm-green hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2
+                                focus:ring-farm-green transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl"">
+                                    Registrar
                                 </button>
                             </div>
                         </div>

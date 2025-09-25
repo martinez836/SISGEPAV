@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Farm;
 use App\Models\Harvest;
+use App\Models\Batch;
+use Illuminate\Support\Facades\Auth;
 
 class HarvesterController extends Controller
 {
@@ -13,8 +15,18 @@ class HarvesterController extends Controller
      */
     public function index()
     {
+        // obtiene todas las granjas
         $farms = Farm::all();
-        return view('harvester.index', compact('farms'));
+        // obtiene el lote creado hoy
+        $dailyBatch = \App\Models\Batch::whereDate('created_at', \Carbon\Carbon::today())->first();
+        // obtiene las últimas 10 recolecciones del usuario autenticado para mostrar en el historial en la vista
+        $recentHarvests = Harvest::with('farm')
+        ->where('user_id', Auth::id())
+        ->latest()
+        ->take(10)
+        ->get();
+
+        return view('harvester.index', compact('farms', 'dailyBatch', 'recentHarvests'));
     }
 
     /**
@@ -34,11 +46,21 @@ class HarvesterController extends Controller
         $validacion = $request->validate([
             'trayQuantity'=> 'required|numeric|min:1',
             'eggUnits'=> 'required|numeric|min:1|max:30',
-            'totalEggs'=> 'required|numeric|min:1',
             'farm_id' => 'required|exists:farms,id',
+            'batch_id' => 'required|exists:batches,id',
         ]);
+
+        // calcular el total de huevos
+        $calculatedTotalEggs = ($validacion['trayQuantity'] * 30) + $validacion['eggUnits'];
+
+        // preparar los datos para guardar en la base de datos
+        $recoleccionData = array_merge($validacion, [
+            'totalEggs' => $calculatedTotalEggs,
+            'user_id' => Auth::id()
+        ]);
+
         // guardar en la base de datos el registro
-        Harvest::create($validacion);
+        Harvest::create($recoleccionData);
         return redirect()->route('harvester.index')->with('success', 'Recolección registrada exitosamente');
     }
 

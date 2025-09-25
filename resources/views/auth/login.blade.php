@@ -20,14 +20,12 @@
         <div class="max-w-md w-full space-y-8 animate-fade-in">
             <!-- Logo and Header -->
             <div class="text-center animate-slide-up">
-                <div class="mx-auto h-20 w-20 bg-gradient-to-br from-farm-green to-farm-light-green rounded-full flex items-center justify-center shadow-lg mb-6">
+                <div class="mx-auto h-20 w-20 bg-gradient-to-br mb-10">
                     <!-- Chicken/Egg Icon -->
-                    <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 1.74.6 3.34 1.61 4.62L7.89 19h8.22l1.28-5.38C18.4 12.34 19 10.74 19 9c0-3.87-3.13-7-7-7zm0 2c2.76 0 5 2.24 5 5 0 1.26-.46 2.42-1.23 3.31l-.77.89V15H9v-1.8l-.77-.89C7.46 11.42 7 10.26 7 9c0-2.76 2.24-5 5-5zm-2 7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm4 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
-                    </svg>
+                    <img src="/images/Logo.jpg" alt="Logo SISGEPAV" class="rounded-full shadow-lg">
                 </div>
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">
-                    <span class="text-farm-green">Avícola</span><span class="text-farm-orange">Manager</span>
+                    <span class="text-farm-green">SISGE</span><span class="text-farm-orange">PAV</span>
                 </h2>
                 <p class="text-gray-600 text-sm">Sistema de Gestión de Producción Avícola</p>
             </div>
@@ -122,7 +120,7 @@
             <!-- Footer -->
             <div class="text-center animate-slide-up" style="animation-delay: 0.4s;">
                 <p class="text-xs text-gray-500">
-                    © 2025 AvicolaManager. Sistema desarrollado para la gestión integral de granjas avícolas.
+                    © 2025 SISGEPAV. Sistema desarrollado para la gestión integral de granjas avícolas.
                 </p>
                 <div class="mt-2 flex justify-center space-x-4 text-xs text-gray-400">
                     <span class="flex items-center">

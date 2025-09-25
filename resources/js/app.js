@@ -6,6 +6,7 @@ import 'sweetalert2';
 
 window.Swal = Swal;
 
+
 import Alpine from 'alpinejs';
 import Swal from 'sweetalert2';
 

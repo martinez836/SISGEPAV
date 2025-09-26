@@ -23,7 +23,7 @@ class HarvesterController extends Controller
         $recentHarvests = Harvest::with('farm')
         ->where('user_id', Auth::id())
         ->latest()
-        ->take(10)
+        ->take(7)
         ->get();
 
         return view('harvester.index', compact('farms', 'dailyBatch', 'recentHarvests'));

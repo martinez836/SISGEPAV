@@ -3,39 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Farm;
-use App\Models\Harvest;
-use App\Models\Batch;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //Obtengo las granjas
-        $farms = Farm::all();
-        //conteo de granjas
-        $farmCount = $farms->count();
-
-        //Obtengo las recolecciones
-        $harvests = Harvest::all();
-
-        //Obtengo los lotes
-        $batches = Batch::all();
-
-        //conteo de lotes
-        $batchCount = $batches->count();
-
-        //obtengo los usuarios
         $users = User::all();
-        //Conteo de usuarios
-        $userCount = $users->count();
 
-        return view('admin.dashboard', compact('farms', 'harvests', 'batches', 'farmCount','batchCount','userCount'));
+        return view('admin.users',compact('users'));
     }
 
     /**

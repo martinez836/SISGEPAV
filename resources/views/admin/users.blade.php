@@ -22,7 +22,7 @@
         <!-- Navigation -->
         <nav class="mt-8">
             <div class="px-4">
-                <a href="#" class="flex items-center px-4 py-3 text-green-700 bg-green-50 rounded-lg transition-colors duration-200">
+                <a href="/dashboard" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 rounded-lg transition-colors duration-200">
                     <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                     </svg>
@@ -31,7 +31,7 @@
             </div>
             
             <div class="px-4 mt-4 space-y-2">
-                <a href="/users" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
+                <a href="/users" class="flex items-center px-4 py-3 text-green-700 bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
                     <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
@@ -98,7 +98,7 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <div class="hidden sm:block text-sm text-gray-500" id="current-time">
+                        <div class="hidden sm:block text-sm text-gray-500">
                             {{ date('d/m/Y H:i') }}
                         </div>
                         
@@ -172,90 +172,10 @@
         <!-- Dashboard Content -->
         <main class="p-4 sm:p-6 lg:p-8">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-green-100 rounded-lg">
-                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM4 9a2 2 0 100 4h12a2 2 0 100-4H4zM4 15a2 2 0 100 4h12a2 2 0 100-4H4z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-sm font-medium text-gray-500">Lotes Activos</h3>
-                            <p class="text-2xl font-semibold text-gray-900">{{ $batchCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-orange-100 rounded-lg">
-                            <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H3.862a2 2 0 01-1.995-1.858L1 7m3 4v6m4-6v6m4-6v6M5 7V4a1 1 0 011-1h8a1 1 0 011 1v3M9 4v3h2V4"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-sm font-medium text-gray-500">Granjas Registradas</h3>
-                            <p class="text-2xl font-semibold text-gray-900">{{ $farmCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-sm font-medium text-gray-500">Usuarios Activos</h3>
-                            <p class="text-2xl font-semibold text-gray-900">{{ $userCount }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center">
-                        <div class="p-2 bg-yellow-100 rounded-lg">
-                            <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h3 class="text-sm font-medium text-gray-500">Huevos Hoy</h3>
-                            <p class="text-2xl font-semibold text-gray-900">1,245</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Production Chart -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">Producción Semanal</h3>
-                    </div>
-                    <div class="p-6">
-                        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg" id="production-chart">
-                            <p class="text-gray-500">Gráfica de producción semanal</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Performance Chart -->
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">Rendimiento por Granja</h3>
-                    </div>
-                    <div class="p-6">
-                        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg" id="performance-chart">
-                            <p class="text-gray-500">Gráfica de rendimiento por granja</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Latest Lots Table -->
             <div class="bg-white rounded-lg shadow">
@@ -266,7 +186,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200" id="batchTable">
+                    <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lote</th>
@@ -404,4 +324,64 @@
     <div class="fixed inset-0 z-40 lg:hidden bg-gray-600 bg-opacity-75 hidden" id="sidebar-overlay"></div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    });
+
+    overlay.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+
+    // User dropdown functionality
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userDropdown = document.getElementById('user-dropdown');
+
+    userMenuButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        toggleDropdown();
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    function toggleDropdown() {
+        if (userDropdown.classList.contains('hidden')) {
+            openDropdown();
+        } else {
+            closeDropdown();
+        }
+    }
+
+    function openDropdown() {
+        userDropdown.classList.remove('hidden');
+        // Trigger animation
+        setTimeout(() => {
+            userDropdown.classList.remove('scale-95', 'opacity-0');
+            userDropdown.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeDropdown() {
+        userDropdown.classList.remove('scale-100', 'opacity-100');
+        userDropdown.classList.add('scale-95', 'opacity-0');
+        // Hide after animation
+        setTimeout(() => {
+            userDropdown.classList.add('hidden');
+        }, 200);
+    }
+});
+</script>
 @endsection

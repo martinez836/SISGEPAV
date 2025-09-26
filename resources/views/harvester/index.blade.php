@@ -118,6 +118,6 @@
                     </div>
                 </div>
 
-                <script src="{{ asset('js/calculate_eggs.js') }}"></script>
+                <!-- <script src="{{ asset('js/calculate_eggs.js') }}"></script> -->
         </div>
         @endsection

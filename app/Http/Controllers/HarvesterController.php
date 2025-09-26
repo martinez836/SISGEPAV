@@ -23,7 +23,7 @@ class HarvesterController extends Controller
         $recentHarvests = Harvest::with('farm')
         ->where('user_id', Auth::id())
         ->latest()
-        ->take(10)
+        ->take(7)
         ->get();
 
         return view('harvester.index', compact('farms', 'dailyBatch', 'recentHarvests'));
@@ -44,8 +44,8 @@ class HarvesterController extends Controller
     {
         // validaciones para las entradas del formulario
         $validacion = $request->validate([
-            'trayQuantity'=> 'required|numeric|min:1',
-            'eggUnits'=> 'required|numeric|min:1|max:30',
+            'trayQuantity'=> 'required|numeric|min:0',
+            'eggUnits'=> 'required|numeric|min:0|max:30',
             'farm_id' => 'required|exists:farms,id',
             'batch_id' => 'required|exists:batches,id',
         ]);

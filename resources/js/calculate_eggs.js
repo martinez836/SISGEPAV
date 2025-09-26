@@ -2,6 +2,7 @@ const trayQuantityInput = document.getElementById('trayQuantity');
 const eggUnitsInput = document.getElementById('eggUnits');
 const totalEggsInput = document.getElementById('totalEggs');
 const harvestForm = document.getElementById('harvest-form');
+const farmSelect = document.getElementById('farmSelect');
 
 function calculateTotalEggs() {
     const trayQuantity = parseInt(trayQuantityInput.value) || 0;
@@ -35,11 +36,23 @@ harvestForm.addEventListener('submit', function (event) {
             // validacion
             const trayQuantity = trayQuantityInput.value;
             const eggUnits = eggUnitsInput.value;
+            const farmId = farmSelect.value;
+            console.log('farmId:', farmId);
+
+            if(!farmId) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar una granja!',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
 
             if (trayQuantity < 0 || eggUnits < 0 || eggUnits > 29 || trayQuantity === '' || eggUnits === '') {
                 Swal.fire({
                     title: 'Error',
-                    text: 'Por favor, verifica los datos ingresados.',
+                    text: 'Por favor, verifica los datos ingresados, debe ingresar valores válidos.',
                     icon: 'error',
                     confirmButtonText: 'Aceptar'
                 });

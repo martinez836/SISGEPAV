@@ -37,7 +37,7 @@
 
                             <div>
                                 <label for="farm_id" class="block text-sm font-medium text-gray-700 mb-2">Granja de Origen</label>
-                                <select id="farm_id" name="farm_id" class="w-full border-2 border-farm-green rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-farm-light-green">
+                                <select id="farmSelect" name="farm_id" class="w-full border-2 border-farm-green rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-farm-light-green">
                                     <option value="">Seleccione una granja</option>
                                     @foreach($farms as $farm)
                                         <option value="{{ $farm->id }}">{{ $farm->farmName }}</option>

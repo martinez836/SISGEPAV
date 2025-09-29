@@ -1,7 +1,7 @@
 /* import DataTable from 'datatables.net-dt';
 import 'datatables.net-dt/css/dataTables.dataTables.css'; */
 
-export function initDashboard() {
+document.addEventListener('DOMContentLoaded', () => {
     // Reloj
     const timeElement = document.getElementById('current-time');
     if (timeElement) {
@@ -88,4 +88,6 @@ export function initDashboard() {
             }
         });
     }
-}
+ 
+})
+    

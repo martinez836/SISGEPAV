@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AvicolaManager - Iniciar Sesión</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/login.js'])
 </head>
 <body class="min-h-screen bg-gradient-to-br from-farm-cream via-green-50 to-orange-50 bg-pattern">
     <!-- Background decorative elements -->

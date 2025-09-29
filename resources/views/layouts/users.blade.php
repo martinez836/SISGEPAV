@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/Logo.png') }}">
 
+
     <title>@yield('title', 'SISGEPAV - Dashboard')</title>
 
     <!-- Fonts -->
@@ -18,7 +19,9 @@
 
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/dashboard.js'])
+    @vite(['resources/css/app.css', 'resources/js/users.js'])
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-50">
     @yield('content')

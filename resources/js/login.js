@@ -13,6 +13,7 @@ function togglePassword() {
         eyeClosed.classList.add('hidden');
     }
 }
+window.togglePassword = togglePassword;
 
 // Efectos de focus
 document.querySelectorAll('input').forEach(input => {

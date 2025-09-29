@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.users')
 
 @section('title', 'SISGEPAV - Dashboard Administrativo')
 
@@ -94,13 +94,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
-                        <h1 class="ml-2 lg:ml-0 text-xl font-semibold text-gray-900">Dashboard</h1>
+                        <h1 class="ml-2 lg:ml-0 text-xl font-semibold text-gray-900">Usuarios</h1>
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <div class="hidden sm:block text-sm text-gray-500">
-                            {{ date('d/m/Y H:i') }}
-                        </div>
+                        <div id="current-time" class="hidden sm:block text-sm text-gray-500"></div>
                         
                         <!-- User Dropdown -->
                         <div class="relative">
@@ -181,138 +179,23 @@
             <div class="bg-white rounded-lg shadow">
                 <div class="p-6 border-b border-gray-200">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-semibold text-gray-900">Últimos Lotes Registrados</h3>
-                        <a href="#" class="text-green-600 hover:text-green-500 text-sm font-medium">Ver todos</a>
+                        <h3 class="text-lg font-semibold text-gray-900">Usuarios Registrados</h3>
+                        <button id="openModalBtn" class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg shadow-md hover:from-green-700 hover:to-green-500 transition"> Crear Usuario </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200" id="">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lote</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Granja</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Huevos</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">LOT-2025-001</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">Granja El Porvenir</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">24/09/2025</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">1,250</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Activo
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-green-600 hover:text-green-900 mr-3">Ver</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">LOT-2025-002</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">Granja San José</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">23/09/2025</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">980</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Activo
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-green-600 hover:text-green-900 mr-3">Ver</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">LOT-2025-003</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">Granja La Esperanza</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">22/09/2025</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">1,450</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        En Proceso
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-green-600 hover:text-green-900 mr-3">Ver</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">LOT-2025-004</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">Granja Villa Rica</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">21/09/2025</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">1,100</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Activo
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-green-600 hover:text-green-900 mr-3">Ver</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Editar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">LOT-2025-005</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">Granja Los Andes</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">20/09/2025</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">875</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                        Finalizado
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-green-600 hover:text-green-900 mr-3">Ver</button>
-                                    <button class="text-blue-600 hover:text-blue-900">Editar</button>
-                                </td>
-                            </tr>
+                        <tbody class="bg-white divide-y divide-gray-200" id="usersTableBody">
                         </tbody>
                     </table>
                 </div>
@@ -320,68 +203,87 @@
         </main>
     </div>
 
+    <!-- Overlay + Modal -->
+    <div id="userModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg transform transition-all scale-95 opacity-0">
+            <!-- Encabezado -->
+            <div class="flex justify-between items-center border-b px-6 py-4">
+                <h2 class="text-xl font-semibold text-green-700" id="modalTitle">Nuevo Usuario</h2>
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-800">✕</button>
+            </div>
+
+            <!-- Cuerpo -->
+            <form id="userForm">
+                <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" id="userName" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ __('Email') }}
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                            </svg>
+                        </div>
+                        <input id="email" name="email" type="email" :value="old('email')" required autofocus autocomplete="username"
+                                class="block w-full pl-10 pr-3 py-3 border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 hover:border-gray-300"
+                                placeholder="usuario@ejemplo.com">
+                    </div>
+                    <x-input-error :messages="$errors->get('email')" class="mt-1 text-sm text-red-600" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Rol</label>
+                    <select class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500" id="roleSelect">
+                        
+                    </select>
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ __('Password') }}
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <input id="password" name="password" type="password" autocomplete="current-password"
+                                class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-gray-300"
+                                placeholder="••••••••">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg id="eye-open" class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <svg id="eye-closed" class="h-5 w-5 text-gray-400 hover:text-gray-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <x-input-error :messages="$errors->get('password')" class="mt-1 text-sm text-red-600" />
+                </div>
+            </div>
+                <!-- Footer -->
+                <div class="flex justify-end gap-3 px-6 py-4 border-t">
+                    <button id="cancelModalBtn" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-gradient-to-r from-green-600 to-green-400 text-white shadow hover:from-green-700 hover:to-green-500 transition">Guardar</button>
+                </div>
+            </form>
+            
+
+            
+        </div>
+    </div>
     <!-- Sidebar overlay for mobile -->
     <div class="fixed inset-0 z-40 lg:hidden bg-gray-600 bg-opacity-75 hidden" id="sidebar-overlay"></div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Sidebar functionality
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
 
-    sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-    });
-
-    overlay.addEventListener('click', function() {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-    });
-
-    // User dropdown functionality
-    const userMenuButton = document.getElementById('user-menu-button');
-    const userDropdown = document.getElementById('user-dropdown');
-
-    userMenuButton.addEventListener('click', function(event) {
-        event.stopPropagation();
-        toggleDropdown();
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
-            closeDropdown();
-        }
-    });
-
-    function toggleDropdown() {
-        if (userDropdown.classList.contains('hidden')) {
-            openDropdown();
-        } else {
-            closeDropdown();
-        }
-    }
-
-    function openDropdown() {
-        userDropdown.classList.remove('hidden');
-        // Trigger animation
-        setTimeout(() => {
-            userDropdown.classList.remove('scale-95', 'opacity-0');
-            userDropdown.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
-
-    function closeDropdown() {
-        userDropdown.classList.remove('scale-100', 'opacity-100');
-        userDropdown.classList.add('scale-95', 'opacity-0');
-        // Hide after animation
-        setTimeout(() => {
-            userDropdown.classList.add('hidden');
-        }, 200);
-    }
-});
 </script>
 @endsection

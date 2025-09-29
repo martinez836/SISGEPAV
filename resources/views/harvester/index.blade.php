@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- Contenedor principal: Reducción extrema del padding vertical a 'py-1'. Eliminamos min-h-screen y usamos h-full --}}
+
 <div class="h-full bg-gradient-to-br from-farm-cream via-green-50 to-orange-50 bg-pattern flex items-center justify-center py-1 px-3 sm:px-6 lg:px-8">
 
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
@@ -11,12 +11,12 @@
         <div class="absolute bottom-20 right-10 w-5 h-5 bg-farm-green opacity-15 rounded-full animate-float" style="animation-delay: 1.5s;"></div>
     </div>
 
-    {{-- Contenedor de los dos bloques: items-start para alinear arriba --}}
+    {{-- Contenedor --}}
     <div class="max-w-7xl w-full mx-auto animate-fade-in md:flex md:space-x-8 items-start">
 
         {{-- Bloque del Formulario --}}
         <div class="w-full md:w-1/2 space-y-8 md:space-y-0">
-            @if(isset($dailyBatch))
+            @if($stateBatch->isNotEmpty())
             <form method="POST" id="harvest-form" action="{{ route('harvester.store') }}" class="space-y-6">
                 @csrf
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
@@ -25,11 +25,15 @@
                     </div>
                     <div class="space-y-2">
                         <div>
-                            <label for="batch_id" class="block text-sm font-medium text-gray-700 mb-2">Lote del Día</label>
-                            <div class="w-full border-2 border-farm-green rounded-xl px-4 py-2 bg-gray-100 text-gray-900 font-bold">
-                                {{ $dailyBatch->batchName }}
+                            <label for="batch_id" class="block text-sm font-medium text-gray-700 mb-2">Lotes</label>
+                            <div>
+                                <select id="batchSelect" name="batch_id" class="w-full border-2 border-farm-green rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-farm-light-green">
+                                    <option value="">Seleccione un lote</option>
+                                    @foreach($stateBatch as $batch)
+                                    <option value="{{ $batch->id }}">{{ $batch->batchName }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-                            <input type="hidden" name="batch_id" value="{{ $dailyBatch->id }}">
                         </div>
 
                         <div>
@@ -64,21 +68,22 @@
                                 text-sm font-medium rounded-xl text-white bg-gradient-to-r from-farm-green to-farm-light-green
                                 hover:from-farm-green hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2
                                 focus:ring-farm-green transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl"">
-                                    Registrar
-                                </button>
-                            </div>
+                                Registrar
+                            </button>
                         </div>
                     </div>
-                </form>
+                </div>
+            </form>
             @else
                 <div class=" bg-red-100 border-l-4 border-red-500 text-red-700 p-4 animate-fade-in">
                                 <p class="font-bold mb-2">¡Atención!</p>
-                                <p>No se ha creado un lote para el día de hoy. Por favor, informa al administrador. No es posible registrar recolecciones.</p>
+                                <p>No se ha creado un lote para el día de hoy. Por favor, informa al administrador.
+                                    No es posible registrar recolecciones.</p>
                         </div>
                         @endif
                     </div>
 
-                    {{-- Bloque de la Tabla: Usamos 'md:mt-5' para compensar la desalineación si existe --}}
+                    {{-- Bloque de la Tabla --}}
                     <div class="w-full md:w-1/2 mt-8 md:mt-5">
                         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
                             <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Últimas Recolecciones</h3>
@@ -116,8 +121,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- <script src="{{ asset('js/calculate_eggs.js') }}"></script> -->
+                </div>                
         </div>
         @endsection

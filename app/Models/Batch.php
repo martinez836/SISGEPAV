@@ -20,6 +20,11 @@ class Batch extends Model
         return $this->hasMany(Harvest::class, 'batch_id');
     }
 
+    public function batchState()
+    {
+        return $this->belongsTo(BatchState::class, 'batch_state_id');
+    }
+
     // Totales calculados
     public function getTotalHarvestEggsAttribute(): int
     {

@@ -34,7 +34,18 @@ class RolController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'rolName' => 'required|string|max:255|unique:rol,rolName',
+        ]);
+
+        Rol::create([
+            'rolName' => $request->rolName,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User created successfully',
+        ], 201);
     }
 
     /**
@@ -58,7 +69,23 @@ class RolController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $rol = Rol::findOrFail($id);
+        if(!$rol){
+            return response()->json([
+                'success' => false,
+                'message' => 'Role not found',
+            ], 404);
+        }
+        $request->validate([
+            'rolName' => 'required|string|max:255|unique:rol,rolName,'.$rol->id,
+        ]);
+
+        $rol->rolName = $request->rolName;
+        $rol->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Role updated successfully',
+        ], 200);
     }
 
     /**

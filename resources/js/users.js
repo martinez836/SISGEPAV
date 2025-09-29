@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadRoles() {
         try {
-            const response = await fetch('/roles');
+            const response = await fetch('/getRoles');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

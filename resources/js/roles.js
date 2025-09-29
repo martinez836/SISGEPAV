@@ -1,23 +1,23 @@
-import Swal from "sweetalert2";
+import swal from 'sweetalert2';
 
-const farmsTableBody = document.querySelector("#farmsTableBody");
+const rolesTableBody = document.querySelector("#rolesTableBody");
 
 //elements for modal
-const farmForm = document.querySelector("#farmForm");
-const farmModal = document.querySelector("#FarmModal");
+const RolForm = document.querySelector("#RolForm");
+const RolModal = document.querySelector("#RolModal");
 const openBtn = document.querySelector('#openModalBtn'); 
 const closeBtn = document.querySelector('#closeModalBtn'); 
 const cancelBtn = document.querySelector('#cancelModalBtn'); 
-const modalBox = farmModal.querySelector('div');
+const modalBox = RolModal.querySelector('div');
 
 //data form 
-const farmName = document.querySelector("#farmName");
-let currentFarmId = null;
+const roleName = document.querySelector("#rolName");
+let currentRoleId = null;
 
 let option = '';
 
 function openModal() 
-{ farmModal.classList.remove('hidden'); 
+{ RolModal.classList.remove('hidden'); 
     setTimeout(() => { 
         modalBox.classList.remove('scale-95', 'opacity-0'); 
         modalBox.classList.add('scale-100', 'opacity-100'); }, 50); 
@@ -26,222 +26,168 @@ function openModal()
 function closeModal() { 
     modalBox.classList.remove('scale-100', 'opacity-100'); 
     modalBox.classList.add('scale-95', 'opacity-0'); 
-    setTimeout(() => farmModal.classList.add('hidden'), 200); 
+    setTimeout(() => RolModal.classList.add('hidden'), 200); 
 }
 
 openBtn.addEventListener('click', () => {
     option = 'create';
-    modalTitle.textContent = 'Nueva Granja';
+    modalTitle.textContent = 'Nuevo Rol';
     openModal();
 });
 closeBtn.addEventListener('click', closeModal); 
 cancelBtn.addEventListener('click', closeModal);
 
 document.addEventListener('DOMContentLoaded', () => {
-    async function loadFarms() 
+    async function loadRoles()
     {
         try {
-            const response = await fetch('/farms-json');
+            const response = await fetch('/getRoles');
             if(!response.ok)
             {
                 throw new Error('Network response was not ok');
             }
-            const farms = await response.json();
 
-            farmsTableBody.innerHTML = '';
+            const roles = await response.json();
 
-            farms.forEach(farm => {
+            rolesTableBody.innerHTML = '';
+            roles.forEach(rol => {
                 const row = document.createElement('tr');
-                
+
                 const idCell = document.createElement('td');
                 idCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                idCell.textContent = farm.id;
+                idCell.textContent = rol.id;
 
                 const nameCell = document.createElement('td');
                 nameCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                nameCell.textContent = farm.farmName;
-
-                const statesCell = document.createElement('td');
-                statesCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
-                statesCell.textContent = farm.state_id;
+                nameCell.textContent = rol.rolName;
 
                 const actionsCell = document.createElement('td');
-                actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'space-x-2');
+                actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium');
+                actionsCell.innerHTML = ``;
 
                 const editButton = document.createElement('button');
-                editButton.classList.add('text-indigo-600', 'hover:text-indigo-900', 'editButton');
+                editButton.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-2','editButton');
                 editButton.textContent = 'Editar';
 
                 const deleteButton = document.createElement('button');
                 deleteButton.classList.add('text-red-600', 'hover:text-red-900', 'deleteButton');
                 deleteButton.textContent = 'Eliminar';
-                
+
                 actionsCell.appendChild(editButton);
                 actionsCell.appendChild(deleteButton);
                 row.appendChild(idCell);
                 row.appendChild(nameCell);
-                row.appendChild(statesCell);
                 row.appendChild(actionsCell);
-                farmsTableBody.appendChild(row);
+                rolesTableBody.appendChild(row);
             });
         } catch (error) {
-            console.error('Error fetching farms:', error);
-        }    
-    }
-
-    loadFarms();
-
-
-    //edit button and delete(logic to be implemented)
-    farmsTableBody.addEventListener('click', async(e) => {
-        if(e.target.classList.contains('deleteButton'))
-        {
-            currentFarmId = e.target.closest('tr').children[0].textContent;
-            
-            const confirmDelete = await Swal.fire({
-                title: '¿Está seguro?',
-                text: "Esta acción no se puede deshacer.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, desactivar'
-            })
-
-            if(confirmDelete.isConfirmed)
-            {
-                try {
-                    const response = await fetch(`/farms/${currentFarmId}/deactivate`, {
-                        method: 'PUT',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if(!response.ok)
-                    {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const result = await response.json();
-                    if(result.success)
-                    {
-                        Swal.fire('Desactivado', 'La granja ha sido desactivada.', 'success');
-                        loadFarms();
-                    }else
-                    {
-                        Swal.fire('Error', 'Hubo un problema al desactivar la granja.', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error deactivating farm:', error);
-                }
-            }
+            console.error('Error fetching roles:', error);
         }
+    }
+    loadRoles();
 
+
+    //edit button and delete button event delegation
+    rolesTableBody.addEventListener('click', (e) => {
         if(e.target.classList.contains('editButton'))
         {
+            const row = e.target.closest('tr');
+            currentRoleId = row.children[0].textContent;
+            roleName.value = row.children[1].textContent;
             option = 'edit';
-            modalTitle.textContent = 'Editar Granja';
-            const selectedRow = e.target.closest('tr');
-            currentFarmId = selectedRow.children[0].textContent;
-            farmName.value = selectedRow.children[1].textContent;
+            modalTitle.textContent = 'Editar Rol';
             openModal();
         }
     })
 
-    //create farm
-
-    async function createFarm()
+    //update
+    async function updateRole()
     {
         try {
-            const farmData = {
-                farmName: farmName.value,
-                state_id:1
-            };
-            if (farmData.farmName.trim() === '') {
-                Swal.fire('Error', 'El nombre de la granja no puede estar vacío.', 'error');
+            let rolData = {
+                rolName: roleName.value,
+            }
+            if(rolData.rolName.trim() === ''){
+                swal.fire('Error', 'El nombre del rol no puede estar vacío.', 'error');
                 return;
             }
-
-
-            const response = await fetch('/farms',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify(farmData)
-            })
-
-            if(!response.ok)
-            {
-                throw new Error('Network response was not ok');
-            }
-
-            let result = await response.json();
-
-            if (result.success) {
-                Swal.fire('Éxito', 'Granja creado exitosamente', 'success');
-                loadFarms();
-                closeModal();
-            } else {
-                Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
-            }
-        } catch (error) {
-            
-        }
-    }
-
-    //update farm
-
-    async function updateFarm()
-    {
-        try {
-            let farmData = {
-                farmName: farmName.value,
-                state_id:1
-            }
-
-            if (farmData.farmName.trim() === '') {
-                Swal.fire('Error', 'El nombre de la granja no puede estar vacío.', 'error');
-                return;
-            }
-
-            const response = await fetch(`/farms/${currentFarmId}`,{
+            const response = await fetch(`/roles/${currentRoleId}`,{
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                body: JSON.stringify(farmData)}
-            )
+                body: JSON.stringify(rolData)
+            })
+            if(!response.ok)
+            {
+                throw new Error('Network response was not ok');
+            }
 
             const result = await response.json();
-            if(result.success)
-            {
-                Swal.fire('Éxito', 'Granja actualizado exitosamente', 'success');
-                loadFarms();
+            if(result.success){
+                swal.fire('Éxito', 'Rol actualizado exitosamente.', 'success');
+                RolForm.reset();
                 closeModal();
+                loadRoles();
             }else{
-                Swal.fire('Error', 'Hubo un problema al actualizar la granja', 'error');
+                swal.fire('Error', 'Hubo un problema al actualizar el rol.', 'error');
             }
         } catch (error) {
-            
+            console.error('Error updating role:', error);
         }
     }
 
-    farmForm.addEventListener('submit', (e) => {
+    //create 
+    async function createRole()
+    {
+        try {
+            let rolData = {
+                rolName: roleName.value,
+            }
+            if(rolData.rolName.trim() === ''){
+                swal.fire('Error', 'El nombre del rol no puede estar vacío.', 'error');
+
+            }
+            const response = await fetch('/roles',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(rolData)
+            })
+
+            if(!response.ok)
+            {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            if(result.success){
+                swal.fire('Éxito', 'Rol creado exitosamente.', 'success');
+                RolForm.reset();
+                closeModal();
+                loadRoles();
+            }else{
+                swal.fire('Error', 'Hubo un problema al crear el rol.', 'error');
+            }
+        } catch (error) {
+            console.error('Error creating role:', error);
+        }
+    }
+
+    RolForm.addEventListener('submit', (e) => {
         e.preventDefault();
         if(option === 'create')
         {
-            createFarm();
+            createRole();
         }
         if(option === 'edit')
         {
-            updateFarm();
+            updateRole();
         }
     })
 

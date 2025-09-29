@@ -17,8 +17,8 @@ class HarvesterController extends Controller
     {
         // obtiene todas las granjas
         $farms = Farm::all();
-        // obtiene el lote creado hoy
-        $dailyBatch = \App\Models\Batch::whereDate('created_at', \Carbon\Carbon::today())->first();
+        // obtiene el lote con batchState = 'Nuevo' 
+        $stateBatch = Batch::where('batch_state_id', 1)->get();
         // obtiene las últimas 10 recolecciones del usuario autenticado para mostrar en el historial en la vista
         $recentHarvests = Harvest::with('farm')
         ->where('user_id', Auth::id())
@@ -26,7 +26,7 @@ class HarvesterController extends Controller
         ->take(7)
         ->get();
 
-        return view('harvester.index', compact('farms', 'dailyBatch', 'recentHarvests'));
+        return view('harvester.index', compact('farms', 'stateBatch', 'recentHarvests'));
     }
 
     /**

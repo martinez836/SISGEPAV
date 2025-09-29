@@ -1,5 +1,6 @@
 import Swal from 'sweetalert2';
 
+// función global para exportar
 export function initEggCalculator() {
     const trayQuantityInput = document.getElementById('trayQuantity');
     const eggUnitsInput = document.getElementById('eggUnits');
@@ -17,27 +18,17 @@ export function initEggCalculator() {
     trayQuantityInput.addEventListener('input', calculateTotalEggs);
     eggUnitsInput.addEventListener('input', calculateTotalEggs);
 
-    // Alerta de éxito que desaparece después de 5 segundos
-    const successAlert = document.getElementById('success-alert');
-    if (successAlert) {
-        setTimeout(() => {
-            successAlert.classList.add('opacity-0');
-            setTimeout(() => {
-                successAlert.remove();
-            }, 300);
-        }, 5000);
-    }
-
     // Confirmación antes de enviar el formulario
     if (harvestForm) {
         harvestForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            // validacion
+            // validaciones 
             const trayQuantity = trayQuantityInput.value;
             const eggUnits = eggUnitsInput.value;
             const farmId = farmSelect.value;
 
+            // validación si no se ha seleccionado una granja
             if (!farmId) {
                 Swal.fire({
                     title: 'Error',
@@ -48,6 +39,16 @@ export function initEggCalculator() {
                 return;
             }
 
+            // validación si se el total de huevos es 0
+            if(totalEggsInput.value < 1) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'El total huevos no puede ser cero.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
             if (trayQuantity < 0 || eggUnits < 0 || eggUnits > 29 || trayQuantity === '' || eggUnits === '') {
                 Swal.fire({
                     title: 'Error',
@@ -58,6 +59,7 @@ export function initEggCalculator() {
                 return;
             }
 
+            // Mensaje de confirmación o éxito
             Swal.fire({
                 title: 'Confirmar',
                 text: '¿Estás seguro de que deseas guardar estos datos?',
@@ -66,6 +68,7 @@ export function initEggCalculator() {
                 confirmButtonText: 'Sí, guardar',
                 cancelButtonText: 'No, cancelar'
             }).then((result) => {
+                // Si el usuario confirma, envía el formulario
                 if (result.isConfirmed) {
                     harvestForm.submit();
                 }

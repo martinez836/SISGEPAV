@@ -38,7 +38,7 @@
                     Usuarios
                 </a>
                 
-                <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
+                <a href="/farms" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
                     <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H3.862a2 2 0 01-1.995-1.858L1 7m3 4v6m4-6v6m4-6v6M5 7V4a1 1 0 011-1h8a1 1 0 011 1v3M9 4v3h2V4"/>
                     </svg>
@@ -75,8 +75,8 @@
                     <span class="text-white text-sm font-medium">A</span>
                 </div>
                 <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-900">Administrador</p>
-                    <p class="text-xs text-gray-500">admin@sisgepav.com</p>
+                    <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name}}</p>
+                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                 </div>
             </div>
         </div>
@@ -109,8 +109,8 @@
                                     <span class="text-white text-sm font-medium">A</span>
                                 </div>
                                 <div class="hidden sm:block text-left">
-                                    <p class="text-sm font-medium text-gray-900">Admin</p>
-                                    <p class="text-xs text-gray-500">Administrador</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name}}</p>
+                                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                                 </div>
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -122,8 +122,8 @@
                                 <div class="py-1">
                                     <!-- User Info Header -->
                                     <div class="px-4 py-3 border-b border-gray-100">
-                                        <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name ?? 'Administrador' }}</p>
-                                        <p class="text-xs text-gray-500">{{ Auth::user()->email ?? 'admin@sisgepav.com' }}</p>
+                                        <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name}}</p>
+                                        <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                                     </div>
                                     
                                     <!-- Menu Items -->

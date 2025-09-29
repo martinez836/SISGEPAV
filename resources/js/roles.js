@@ -265,4 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 200);
         }
     }
+
+    const table = document.querySelector('#rolTable');
+    if (table) {
+        new DataTable(table, {
+            responsive: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json'
+            }
+        });
+    }
 })

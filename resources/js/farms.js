@@ -319,4 +319,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 200);
         }
     }
+
+    // DataTable
+    const table = document.querySelector('#farmsTable');
+    if (table) {
+        new DataTable(table, {
+            responsive: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json'
+            }
+        });
+    }
 })

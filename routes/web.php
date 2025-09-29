@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\RolController;
 
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -36,6 +37,9 @@ Route::get('/getRoles', [RolController::class, 'getRoles']);
 Route::get('/roles',[RolController::class,'index'])->name('roles.index');
 Route::post('/roles',[RolController::class,'store']);
 Route::put('/roles/{id}',[RolController::class,'update'])->name('roles.update');
+
+//routes for batches
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');

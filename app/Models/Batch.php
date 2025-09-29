@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class Batch extends Model
 {
     protected $table = 'batches';
-    protected $fillable = ['batchName','totalBatch'];
+    protected $fillable = ['batchName','totalBatch','batch_state_id'];
 
     public function details()
     {

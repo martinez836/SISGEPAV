@@ -16,6 +16,9 @@ class StoreBatchClassificationRequest extends FormRequest
             'details.*.category_id'        => ['required','exists:categories,id'],
             'details.*.totalClassification'=> ['required','integer','min:0'],
             'notes'    => ['nullable','string','max:2000'], // si decides guardar notas en otra parte
+            'novelties' => ['sometimes','array'],
+            'novelties.*.quantity' => ['required_with:novelties','integer','min:0'],
+            'novelties.*.novelty'  => ['required_with:novelties','string','max:255'],
         ];
     }
 }

@@ -35,5 +35,16 @@ class Batch extends Model
     {
         return $this->total_harvest_eggs - $this->total_classified;
     }
+
+    public function state()
+    {
+        return $this->belongsTo(\App\Models\BatchState::class, 'batch_state_id');
+    }
+
+    public function novelties()
+    {
+        return $this->hasMany(\App\Models\Novelty::class, 'batch_code', 'batchName');
+    }
+
 }
 

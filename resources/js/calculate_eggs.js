@@ -7,6 +7,7 @@ export function initEggCalculator() {
     const totalEggsInput = document.getElementById('totalEggs');
     const harvestForm = document.getElementById('harvest-form');
     const farmSelect = document.getElementById('farmSelect');
+    const batchSelect = document.getElementById('batchSelect');
 
     function calculateTotalEggs() {
         const trayQuantity = parseInt(trayQuantityInput.value) || 0;
@@ -27,6 +28,18 @@ export function initEggCalculator() {
             const trayQuantity = trayQuantityInput.value;
             const eggUnits = eggUnitsInput.value;
             const farmId = farmSelect.value;
+            const batchId = batchSelect.value;
+
+            // validación seleccion lote
+            if(!batchId) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar un lote!',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
 
             // validación si no se ha seleccionado una granja
             if (!farmId) {

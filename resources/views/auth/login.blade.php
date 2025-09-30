@@ -59,7 +59,7 @@
                         <!-- Password -->
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                {{ __('Password') }}
+                                {{ __('Contraseña') }}
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -88,14 +88,14 @@
                             <div class="flex items-center">
                                 <input id="remember_me" name="remember" type="checkbox" class="h-4 w-4 text-farm-green focus:ring-farm-green border-gray-300 rounded">
                                 <label for="remember_me" class="ml-2 block text-sm text-gray-700">
-                                    {{ __('Remember me') }}
+                                    {{ __('Recuerdame') }}
                                 </label>
                             </div>
 
                             <div class="text-sm">
                                 @if (Route::has('password.request'))
                                     <a href="{{ route('password.request') }}" class="font-medium text-farm-green hover:text-farm-light-green transition-colors duration-200">
-                                        {{ __('Forgot your password?') }}
+                                        {{ __('Olvidaste tu contraseña?') }}
                                     </a>
                                 @endif
                             </div>
@@ -111,7 +111,7 @@
                                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                 </svg>
                             </span>
-                            {{ __('Log in') }}
+                            {{ __('Ingresar') }}
                         </button>
                     </div>
                 </div>

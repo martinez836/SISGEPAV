@@ -27,6 +27,8 @@ function closeModal() {
     modalBox.classList.remove('scale-100', 'opacity-100'); 
     modalBox.classList.add('scale-95', 'opacity-0'); 
     setTimeout(() => farmModal.classList.add('hidden'), 200); 
+    option = ''; 
+    BatchForm.reset(); 
 }
 
 openBtn.addEventListener('click', () => {
@@ -320,6 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // DataTable
     const table = document.querySelector('#farmsTable');
     if (table) {
         new DataTable(table, {

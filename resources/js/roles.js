@@ -27,6 +27,8 @@ function closeModal() {
     modalBox.classList.remove('scale-100', 'opacity-100'); 
     modalBox.classList.add('scale-95', 'opacity-0'); 
     setTimeout(() => RolModal.classList.add('hidden'), 200); 
+    option = ''; 
+    BatchForm.reset(); 
 }
 
 openBtn.addEventListener('click', () => {
@@ -264,5 +266,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 userDropdown.classList.add('hidden');
             }, 200);
         }
+    }
+
+    const table = document.querySelector('#rolTable');
+    if (table) {
+        new DataTable(table, {
+            responsive: true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json'
+            }
+        });
     }
 })

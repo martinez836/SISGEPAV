@@ -13,7 +13,7 @@
                 </label>
                 <select id="batch_id" name="batch_id"
                     class="w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="">-- seleccionar --</option>
+                    <option value=""> seleccionar </option>
                     @foreach ($batches as $b)
                         <option value="{{ $b->id }}"
                             {{ (string) $selectedBatch === (string) $b->id ? 'selected' : '' }}>

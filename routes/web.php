@@ -8,7 +8,7 @@ use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\RolController;
-
+use App\Http\Controllers\BatchController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -39,7 +39,11 @@ Route::post('/roles',[RolController::class,'store']);
 Route::put('/roles/{id}',[RolController::class,'update'])->name('roles.update');
 
 //routes for batches
-
+Route::get('/batches', [BatchController::class, 'index'])->name('batches.index');
+Route::get('/batches-json', [BatchController::class, 'getBatches']);
+Route::post('/batches', [BatchController::class, 'store']);
+Route::put('/batches/{id}', [BatchController::class, 'update']);
+Route::put('/batches/{id}/markCollection', [BatchController::class, 'markCollection']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile',  [ProfileController::class, 'edit'])->name('profile.edit');

@@ -31,6 +31,8 @@ function closeModal() {
     modalBox.classList.remove('scale-100', 'opacity-100'); 
     modalBox.classList.add('scale-95', 'opacity-0'); 
     setTimeout(() => modal.classList.add('hidden'), 200); 
+    option = ''; 
+    BatchForm.reset(); 
 }
 
 openBtn.addEventListener('click', () => {

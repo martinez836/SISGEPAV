@@ -36,9 +36,14 @@
                         <div class="mt-1 text-2xl font-semibold text-gray-900 tabular-nums" id="sumCls">0</div>
                     </div>
                     <div>
+                        <div class="text-sm text-gray-500">Novedades</div>
+                        <div class="mt-1 text-2xl font-semibold text-gray-900 tabular-nums" id="sumNov">0</div>
+                    </div>
+                    <div>
                         <div class="text-sm text-gray-500">Restantes</div>
                         <div class="mt-1 text-2xl font-semibold tabular-nums" id="balance">{{ $inputQty }}</div>
                     </div>
+
                     <div class="flex items-center gap-3">
                         <label class="text-sm text-gray-600 flex items-center gap-2">
                             Huevos por bandeja:
@@ -99,21 +104,92 @@
                 </div>
             @endforeach
         </div>
+
+        {{-- Novedades (opcional, múltiples) --}}
+        <div class="bg-white rounded-lg ring-1 ring-gray-100 shadow p-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-medium text-gray-900">Novedades</h2>
+                <button type="button" id="btnAddNovelty" class="px-3 py-2 rounded border hover:bg-gray-50">
+                    Agregar novedad
+                </button>
+            </div>
+
+            @php $oldNov = old('novelties'); @endphp
+
+            <div id="noveltyList" class="mt-4 space-y-3">
+                @if (is_array($oldNov))
+                    @foreach ($oldNov as $i => $n)
+                        <div class="grid grid-cols-1 md:grid-cols-[140px_1fr_auto] gap-3 items-start novelty-item">
+                            <div>
+                                <label class="block text-xs text-gray-600">Cantidad</label>
+                                <input type="number" min="0" name="novelties[{{ $i }}][quantity]"
+                                    value="{{ (int) ($n['quantity'] ?? 0) }}" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600">Descripción</label>
+                                <input type="text" name="novelties[{{ $i }}][novelty]"
+                                    value="{{ $n['novelty'] ?? '' }}" class="w-full border rounded p-2">
+                            </div>
+                            <button type="button"
+                                class="btn-del-nov px-3 py-2 rounded border text-red-700">Eliminar</button>
+                        </div>
+                    @endforeach
+                @elseif(!empty($novelties) && count($novelties))
+                    @foreach ($novelties as $i => $n)
+                        <div class="grid grid-cols-1 md:grid-cols-[140px_1fr_auto] gap-3 items-start novelty-item">
+                            <div>
+                                <label class="block text-xs text-gray-600">Cantidad</label>
+                                <input type="number" min="0" name="novelties[{{ $i }}][quantity]"
+                                    value="{{ (int) $n->quantity }}" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600">Descripción</label>
+                                <input type="text" name="novelties[{{ $i }}][novelty]"
+                                    value="{{ $n->novelty }}" class="w-full border rounded p-2">
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
+            <template id="noveltyTpl">
+                <div class="grid grid-cols-1 md:grid-cols-[140px_1fr_auto] gap-3 items-start novelty-item">
+                    <div>
+                        <label class="block text-xs text-gray-600">Cantidad</label>
+                        <input type="number" min="0" name="__name__[quantity]"
+                            class="w-full border rounded p-2">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-600">Descripción</label>
+                        <input type="text" name="__name__[novelty]" class="w-full border rounded p-2">
+                    </div>
+                </div>
+            </template>
+        </div>
     </form>
 
     <script>
-        // Mismo JS que en create (copiar tal cual)
+        // ===== Lógica del formulario de clasificación (con Novedades) =====
         const nf = new Intl.NumberFormat('es-CO');
+
+        // Clasificación
         const inputs = [...document.querySelectorAll('.cls-input')];
         const sumEl = document.getElementById('sumCls');
+
+        // Novedades
+        const novQtyInputs = () => [...document.querySelectorAll('#noveltyList input[name$="[quantity]"]')];
+        const sumNovEl = document.getElementById('sumNov');
+
+        // KPIs y progreso general
         const balEl = document.getElementById('balance');
         const warn = document.getElementById('warn');
         const progress = document.getElementById('progressBar');
+        const eggsPerTray = document.getElementById('eggsPerTray');
         const btnAutof = document.getElementById('btnAutofill');
         const btnReset = document.getElementById('btnReset');
-        const eggsPerTray = document.getElementById('eggsPerTray');
         const inputQtyN = parseInt(document.getElementById('inputQty').textContent || '0', 10);
         const autofillInput = document.querySelector('[data-autofill="1"]') || inputs.at(-1);
+
         inputs.forEach(i => i.addEventListener('wheel', e => e.preventDefault(), {
             passive: false
         }));
@@ -134,48 +210,65 @@
             });
         });
 
-        function sumExcept(except) {
+        function sumClassExcept(except) {
             return inputs.reduce((a, el) => a + (el === except ? 0 : parseInt(el.value || '0', 10)), 0);
         }
 
+        function sumNovelties() {
+            return novQtyInputs().reduce((a, el) => a + Math.max(0, parseInt(el.value || '0', 10)), 0);
+        }
+
         function clampToRemaining(target) {
-            const others = sumExcept(target);
-            const maxAllowed = Math.max(0, inputQtyN - others);
+            const others = sumClassExcept(target);
+            const nov = sumNovelties();
+            const maxAllowed = Math.max(0, inputQtyN - (others + nov));
             const val = Math.max(0, parseInt(target.value || '0', 10));
             if (val > maxAllowed) target.value = maxAllowed;
         }
 
         function recalc(active = null) {
             if (active) clampToRemaining(active);
-            let sum = 0;
-            inputs.forEach(i => sum += parseInt(i.value || '0', 10));
-            const bal = inputQtyN - sum;
-            sumEl.textContent = nf.format(sum);
+
+            const sumCls = inputs.reduce((a, i) => a + parseInt(i.value || '0', 10), 0);
+            const sumNov = sumNovelties();
+            const used = sumCls + sumNov;
+            const bal = inputQtyN - used;
+
+            sumEl.textContent = nf.format(sumCls);
+            sumNovEl.textContent = nf.format(sumNov);
             balEl.textContent = nf.format(bal);
-            const pct = inputQtyN > 0 ? Math.min(100, Math.max(0, (sum / inputQtyN) * 100)) : 0;
+
+            const pct = inputQtyN > 0 ? Math.min(100, Math.max(0, (used / inputQtyN) * 100)) : 0;
             progress.style.width = pct + '%';
             progress.className = 'h-2 ' + (bal < 0 ? 'bg-red-600' : (bal === 0 ? 'bg-green-600' : 'bg-yellow-500'));
             warn.classList.toggle('hidden', !(bal < 0));
+
             inputs.forEach(i => {
                 const wrap = i.closest('[class*="ring-1"]');
                 const bar = wrap.querySelector('[data-bar]');
                 const pctEl = wrap.querySelector('[data-pct]');
                 const v = parseInt(i.value || '0', 10);
                 const p = inputQtyN > 0 ? Math.min(100, Math.round((v / inputQtyN) * 100)) : 0;
-                bar.style.width = p + '%';
-                pctEl.textContent = p + '%';
+                if (bar) bar.style.width = p + '%';
+                if (pctEl) pctEl.textContent = p + '%';
             });
         }
+
+        // Eventos
         inputs.forEach(i => i.addEventListener('input', () => recalc(i)));
-        recalc();
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('#noveltyList input[name$="[quantity]"]')) recalc();
+        });
+
+        // Botones
         document.querySelectorAll('.btn-step').forEach(btn => {
             btn.addEventListener('click', () => {
                 const wrap = btn.closest('[class*="ring-1"]');
                 const i = wrap.querySelector('.cls-input');
                 const step = btn.dataset.step;
-                let d = 0;
-                d = (step === 'tray') ? Math.max(1, parseInt(eggsPerTray.value || '30', 10)) : parseInt(
-                    step, 10);
+                let d = (step === 'tray') ?
+                    Math.max(1, parseInt(eggsPerTray.value || '30', 10)) :
+                    parseInt(step, 10);
                 i.value = Math.max(0, parseInt(i.value || '0', 10) + d);
                 recalc(i);
             });
@@ -184,20 +277,63 @@
             btn.addEventListener('click', () => {
                 const wrap = btn.closest('[class*="ring-1"]');
                 const i = wrap.querySelector('.cls-input');
-                const others = sumExcept(i);
-                i.value = Math.max(0, inputQtyN - others);
+                const others = sumClassExcept(i);
+                const nov = sumNovelties();
+                i.value = Math.max(0, inputQtyN - (others + nov));
                 recalc(i);
             });
         });
         btnAutof?.addEventListener('click', () => {
             if (!autofillInput) return;
-            const others = sumExcept(autofillInput);
-            autofillInput.value = Math.max(0, inputQtyN - others);
+            const others = sumClassExcept(autofillInput);
+            const nov = sumNovelties();
+            autofillInput.value = Math.max(0, inputQtyN - (others + nov));
             recalc(autofillInput);
         });
         btnReset?.addEventListener('click', () => {
             inputs.forEach(i => i.value = 0);
             recalc();
         });
+
+        // ===== Novedades dinámicas (agregar / eliminar) =====
+        (function() {
+            const list = document.getElementById('noveltyList');
+            const tpl = document.getElementById('noveltyTpl');
+            const btn = document.getElementById('btnAddNovelty');
+            if (!list || !tpl || !btn) return;
+
+            function renumber() {
+                [...list.querySelectorAll('.novelty-item')].forEach((row, idx) => {
+                    row.querySelectorAll('input').forEach(inp => {
+                        if (inp.name.startsWith('__name__')) {
+                            inp.name = inp.name.replace('__name__', `novelties[${idx}]`);
+                        } else {
+                            inp.name = inp.name.replace(/novelties\[\d+\]/, `novelties[${idx}]`);
+                        }
+                    });
+                });
+                recalc();
+            }
+
+            btn.addEventListener('click', () => {
+                const node = document.importNode(tpl.content, true);
+                list.appendChild(node);
+                renumber();
+                list.querySelector('.novelty-item:last-child input[name$="[quantity]"]')?.focus();
+            });
+
+            list.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-del-nov')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.target.closest('.novelty-item')?.remove();
+                    renumber();
+                }
+            });
+
+            renumber(); // normaliza e inicializa totales con lo que venga del backend
+        })();
+
+        recalc(); // inicial
     </script>
 @endsection

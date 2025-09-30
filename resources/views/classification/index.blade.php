@@ -3,6 +3,7 @@
 @section('header', 'Clasificación por lote')
 
 @section('content')
+
     <div class="flex items-center justify-between mb-6">
         <div>
             <h1 class="text-2xl font-semibold text-gray-900">Clasificación por lote</h1>
@@ -17,6 +18,19 @@
     @if (session('ok'))
         <div class="mb-4 rounded-lg bg-green-50 text-green-800 px-4 py-3">{{ session('ok') }}</div>
     @endif
+
+    <form method="GET" action="{{ route('classification.index') }}" class="mb-4 flex items-end gap-3">
+        <div>
+            <label class="block text-sm text-gray-600 mb-2">Estado</label>
+            <select name="state_id" class="w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                <option value=""> todos </option>
+                @foreach ($states ?? [] as $s)
+                    <option value="{{ $s->id }}" @selected(($stateId ?? '') == $s->id)>{{ $s->state }}</option>
+                @endforeach
+            </select>
+        </div>
+        <button class="px-3 py-2 rounded bg-gray-800 text-white">Filtrar</button>
+    </form>
 
     <div class="bg-white shadow rounded-xl ring-1 ring-gray-100 overflow-hidden">
         <table class="min-w-full text-sm">

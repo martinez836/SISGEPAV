@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\ServiceProvider;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // middleware para verificar roles de usuario
+        Route::aliasMiddleware('role', RoleMiddleware::class);
+
     }
 
     /**

@@ -12,13 +12,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use App\Models\BatchState;
+use App\Models\Novelty;
+use Illuminate\Support\Facades\Auth;
 
 class ClassificationController extends Controller
 {
     /**
      * Listado de lotes con totales calculados por subconsultas.
      */
-    public function index()
+    public function index(Request $request)
     {
         $harvested = Harvest::selectRaw('COALESCE(SUM(totalEggs),0)')
             ->whereColumn('batch_id', 'batches.id');
@@ -26,127 +29,139 @@ class ClassificationController extends Controller
         $classified = BatchDetail::selectRaw('COALESCE(SUM(totalClassification),0)')
             ->whereColumn('batch_id', 'batches.id');
 
+        $recoleccionId = \App\Models\BatchState::whereRaw('LOWER(state)=?', ['recoleccion'])->value('id');
+
         $batches = Batch::query()
+            ->when($recoleccionId, fn($q)=>$q->where('batch_state_id',$recoleccionId))
             ->select('batches.*')
             ->selectSub($harvested,  'harvested_sum')
             ->selectSub($classified, 'classified_sum')
             ->orderByDesc('id')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
+
+        // 👇 fallback: si no hay harvests, usa totalBatch
+        $batches->getCollection()->transform(function ($b) {
+            $b->harvested_sum = (int)($b->harvested_sum ?: $b->totalBatch);
+            return $b;
+        });
 
         return view('classification.index', compact('batches'));
     }
 
+
+
+
     /**
      * Form de creación. Permite seleccionar lote y ver entrada (suma de harvests).
      */
+
     public function create(Request $request)
-{
-    $dayParam = $request->query('day'); // yyyy-mm-dd
-    $day = null;
+    {
+        $selectedBatch = $request->query('batch_id');
 
-    // Validar/parsear fecha (si viene mal, la ignoramos)
-    if ($dayParam) {
-        try {
-            $day = Carbon::parse($dayParam)->format('Y-m-d');
-        } catch (\Throwable $e) {
-            $day = null;
-        }
-    }
-
-    // Lotes a mostrar: SOLO los que tengan recolecciones ese día.
-    // Si no hay fecha, NO mostramos lotes (evitamos traer todo).
-    if ($day) {
+        // Lotes en estado Recolección
+        $recoleccionId = BatchState::whereRaw('LOWER(state)=?', ['recoleccion'])->value('id');
         $batches = Batch::query()
-            ->whereIn('id', function ($q) use ($day) {
-                $q->select('batch_id')
-                  ->from('harvests')
-                  ->whereDate('created_at', $day)
-                  ->groupBy('batch_id');
-            })
+            ->when($recoleccionId, fn($q) => $q->where('batch_state_id', $recoleccionId))
             ->orderByDesc('id')
-            ->get(['id','batchName']);
-    } else {
-        $batches = collect(); // vacío hasta que el usuario elija fecha
-    }
+            ->get(['id','batchName','totalBatch']);
 
-    $categories    = $this->orderedCategories(); // tu helper ya definido
-    $selectedBatch = $request->query('batch_id');
+        // Total del lote (suma harvests o fallback a totalBatch)
+        $inputQtyTotal = $selectedBatch ? $this->inputQtyForBatchId((int)$selectedBatch) : 0;
 
-    // Totales
-    $inputQtyTotal = 0; // total de huevos del lote (todas las fechas)
-    $inputQtyDay   = 0; // total de huevos del lote SOLO en la fecha elegida
+        // Categorías y detalle existente
+        $categories = Category::orderBy('categoryName')->get(['id','categoryName']);
+        $existing   = $selectedBatch
+            ? BatchDetail::where('batch_id', $selectedBatch)
+                ->get(['category_id','totalClassification'])
+                ->keyBy('category_id')
+            : collect();
 
-    if ($selectedBatch) {
-        // total acumulado del lote
-        $inputQtyTotal = (int) Harvest::where('batch_id', $selectedBatch)->sum('totalEggs');
-
-        // total del día
-        if ($day) {
-            $inputQtyDay = (int) Harvest::where('batch_id', $selectedBatch)
-                ->whereDate('created_at', $day)
-                ->sum('totalEggs');
+        // Novedades por batch_code (batchName) -> NO batch_id
+        $novelties = collect();
+        if ($selectedBatch) {
+            $batch = Batch::select('id','batchName')->find($selectedBatch);
+            if ($batch) {
+                $novelties = Novelty::where('batch_code', $batch->batchName)
+                    ->get(['id','quantity','novelty']);
+            }
         }
+
+        return view('classification.create', compact(
+            'batches','categories','selectedBatch','inputQtyTotal','existing','novelties'
+        ));
     }
 
-    // NOTA: la clasificación sigue siendo por lote (acumulada).
-    // Usamos la fecha solo para facilitar la selección del lote.
-    return view('classification.create', [
-        'batches'       => $batches,
-        'categories'    => $categories,
-        'selectedBatch' => $selectedBatch,
-        'day'           => $day,
-        'inputQty'      => $inputQtyTotal, // <- tu variable original que usa la vista
-        'inputQtyDay'   => $inputQtyDay,   // <- adicional para mostrar "Entrada del día"
-    ]);
-}
 
     /**
      * Guarda la clasificación de un lote.
      */
-    public function store(StoreBatchClassificationRequest $request)
+    public function store(\App\Http\Requests\StoreBatchClassificationRequest $request)
     {
         DB::transaction(function () use ($request) {
+            $batch = Batch::findOrFail($request->batch_id);
+            $inputQty = $this->inputQtyForBatch($batch); // harvests o totalBatch
 
-            $batch    = Batch::findOrFail($request->batch_id);
-            $inputQty = $this->inputQtyForBatch($batch);
-
-            // Normalizar: agrupa por category_id y suma cantidades (evita duplicados en el POST)
+            // --- Clasificaciones (normalizadas) ---
             $rows = collect($request->input('details', []))
-                ->map(function ($r) {
-                    return [
-                        'category_id' => (int) ($r['category_id'] ?? 0),
-                        'qty'         => max(0, (int) ($r['totalClassification'] ?? 0)),
-                    ];
-                })
-                ->filter(fn($r) => $r['category_id'] > 0)
-                ->groupBy('category_id')
-                ->map(fn($g) => [
-                    'category_id' => $g->first()['category_id'],
-                    'qty'         => (int) $g->sum('qty'),
+                ->map(fn ($r) => [
+                    'category_id' => (int)($r['category_id'] ?? 0),
+                    'qty'         => max(0, (int)($r['totalClassification'] ?? 0)),
                 ])
+                ->filter(fn ($r) => $r['category_id'] > 0)
+                ->groupBy('category_id')
+                ->map(fn ($g) => ['category_id' => $g->first()['category_id'], 'qty' => (int)$g->sum('qty')])
                 ->values();
 
-            $sum = (int) $rows->sum('qty');
-            if ($sum > $inputQty) {
+            $sumClass = (int)$rows->sum('qty');
+
+            // --- Novedades desde el request ---
+            $reqNovs = collect($request->input('novelties', []))
+                ->map(fn ($n) => [
+                    'quantity' => max(0, (int)($n['quantity'] ?? 0)),
+                    'novelty'  => trim((string)($n['novelty'] ?? '')),
+                ])
+                ->filter(fn ($n) => $n['quantity'] > 0 || $n['novelty'] !== '')
+                ->values();
+            $sumNov = (int)$reqNovs->sum('quantity');
+
+            // --- Validación de tope ---
+            $used = $sumClass + $sumNov;
+            if ($used > $inputQty) {
                 throw ValidationException::withMessages([
-                    'details' => "La suma por categorías ($sum) supera la entrada del lote ($inputQty).",
+                    'details' => "La suma de categorías ($sumClass) + novedades ($sumNov) = $used supera la entrada del lote ($inputQty).",
                 ]);
             }
 
-            // Upsert por categoría (crea/actualiza)
+            // --- Upsert clasificaciones ---
             foreach ($rows as $row) {
                 BatchDetail::updateOrCreate(
                     ['batch_id' => $batch->id, 'category_id' => $row['category_id']],
                     ['totalClassification' => $row['qty']]
                 );
             }
+
+            // --- Novedades: borrar y recrear por batch_code ---
+            Novelty::where('batch_code', $batch->batchName)->delete();
+            $userName = auth()->user()->name ?? 'Sistema';
+            foreach ($reqNovs as $n) {
+                Novelty::create([
+                    'batch_code' => $batch->batchName,
+                    'quantity'   => $n['quantity'],
+                    'novelty'    => $n['novelty'],
+                    'user_name'  => $userName,
+                ]);
+            }
+
+            $batch->batch_state_id = 3;
+            $batch->save();
         });
 
-        // Redirección inteligente (opcional): si envías go_to=show desde el form
-        return $request->get('go_to') === 'show'
-            ? redirect()->route('classification.show', $request->batch_id)->with('ok', 'Clasificación guardada.')
-            : redirect()->route('classification.index')->with('ok', 'Clasificación guardada.');
+        return redirect()->route('classification.index')->with('ok', 'Clasificación guardada.');
     }
+
+
 
     /**
      * Form de edición de un lote clasificado.
@@ -157,8 +172,13 @@ class ClassificationController extends Controller
         $categories = $this->orderedCategories();
         $inputQty   = $this->inputQtyForBatch($batch);
 
-        return view('classification.edit', compact('batch','categories','inputQty'));
+        // novedades del lote
+        $novelties = Novelty::where('batch_code', $batch->batchName)
+            ->get(['id','quantity','novelty']);
+
+        return view('classification.edit', compact('batch','categories','inputQty','novelties'));
     }
+
 
     /**
      * Actualiza y sincroniza las líneas de clasificación del lote.
@@ -166,52 +186,76 @@ class ClassificationController extends Controller
      * - Upsert de categorías enviadas
      * - Elimina categorías NO enviadas (sync real)
      */
-    public function update(UpdateBatchClassificationRequest $request, $batchId)
+    public function update(\App\Http\Requests\UpdateBatchClassificationRequest $request, $batchId)
     {
         DB::transaction(function () use ($request, $batchId) {
-
             $batch    = Batch::findOrFail($batchId);
             $inputQty = $this->inputQtyForBatch($batch);
 
+            // --- Clasificaciones ---
             $rows = collect($request->input('details', []))
-                ->map(function ($r) {
-                    return [
-                        'category_id' => (int) ($r['category_id'] ?? 0),
-                        'qty'         => max(0, (int) ($r['totalClassification'] ?? 0)),
-                    ];
-                })
-                ->filter(fn($r) => $r['category_id'] > 0)
-                ->groupBy('category_id')
-                ->map(fn($g) => [
-                    'category_id' => $g->first()['category_id'],
-                    'qty'         => (int) $g->sum('qty'),
+                ->map(fn ($r) => [
+                    'category_id' => (int)($r['category_id'] ?? 0),
+                    'qty'         => max(0, (int)($r['totalClassification'] ?? 0)),
                 ])
+                ->filter(fn ($r) => $r['category_id'] > 0)
+                ->groupBy('category_id')
+                ->map(fn ($g) => ['category_id' => $g->first()['category_id'], 'qty' => (int)$g->sum('qty')])
                 ->values();
 
-            $sum = (int) $rows->sum('qty');
-            if ($sum > $inputQty) {
+            $sumClass = (int)$rows->sum('qty');
+
+            // --- Novedades del request ---
+            $reqNovs = collect($request->input('novelties', []))
+                ->map(fn ($n) => [
+                    'quantity' => max(0, (int)($n['quantity'] ?? 0)),
+                    'novelty'  => trim((string)($n['novelty'] ?? '')),
+                ])
+                ->filter(fn ($n) => $n['quantity'] > 0 || $n['novelty'] !== '')
+                ->values();
+            $sumNov = (int)$reqNovs->sum('quantity');
+
+            // --- Validación ---
+            $used = $sumClass + $sumNov;
+            if ($used > $inputQty) {
                 throw ValidationException::withMessages([
-                    'details' => "La suma por categorías ($sum) supera la entrada del lote ($inputQty).",
+                    'details' => "La suma de categorías ($sumClass) + novedades ($sumNov) = $used supera la entrada del lote ($inputQty).",
                 ]);
             }
 
-            // Sync: elimina lo que NO venga en el request
+            // --- Sync de detalles ---
             $keepIds = $rows->pluck('category_id')->all();
             BatchDetail::where('batch_id', $batch->id)
-                ->when(!empty($keepIds), fn($q) => $q->whereNotIn('category_id', $keepIds))
+                ->when(!empty($keepIds), fn ($q) => $q->whereNotIn('category_id', $keepIds))
                 ->delete();
 
-            // Upsert de lo que sí viene
             foreach ($rows as $row) {
                 BatchDetail::updateOrCreate(
                     ['batch_id' => $batch->id, 'category_id' => $row['category_id']],
                     ['totalClassification' => $row['qty']]
                 );
             }
+
+            // --- Novedades: borrar y recrear por batch_code ---
+            Novelty::where('batch_code', $batch->batchName)->delete();
+            $userName = auth()->user()->name ?? 'Sistema';
+            foreach ($reqNovs as $n) {
+                Novelty::create([
+                    'batch_code' => $batch->batchName,
+                    'quantity'   => $n['quantity'],
+                    'novelty'    => $n['novelty'],
+                    'user_name'  => $userName,
+                ]);
+            }
+
+            $batch->batch_state_id = 3;
+            $batch->save();
         });
 
-        return back()->with('ok','Clasificación actualizada.');
+        return redirect()->route('classification.index')->with('ok', 'Clasificación actualizada.');
     }
+
+
 
     /**
      * Detalle del lote clasificado con KPIs calculados.
@@ -256,16 +300,21 @@ class ClassificationController extends Controller
             ->values();
     }
 
-    /**
-     * Total de huevos (entrada) para un batch.
-     */
     private function inputQtyForBatch(Batch $batch): int
     {
-        return (int) Harvest::where('batch_id', $batch->id)->sum('totalEggs');
+        $sum = (int) Harvest::where('batch_id', $batch->id)->sum('totalEggs');
+        return $sum > 0 ? $sum : (int) ($batch->totalBatch ?? 0);
     }
 
     private function inputQtyForBatchId(int $batchId): int
     {
-        return (int) Harvest::where('batch_id', $batchId)->sum('totalEggs');
+        $sum = (int) Harvest::where('batch_id', $batchId)->sum('totalEggs');
+        if ($sum > 0) return $sum;
+        return (int) (Batch::where('id', $batchId)->value('totalBatch') ?? 0);
+    }
+
+    private function stateId(string $name): ?int
+    {
+        return BatchState::whereRaw('LOWER(state)=?', [strtolower($name)])->value('id');
     }
 }

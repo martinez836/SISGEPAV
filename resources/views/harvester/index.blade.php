@@ -53,7 +53,7 @@
                             </div>
                             <div>
                                 <label for="eggUnits" class="block text-sm font-medium text-gray-700 mb-2">Unidades</label>
-                                <input type="number" id="eggUnits" name="eggUnits" min="0" max="29" class="block w-full border-2 border-farm-green rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-farm-light-green" placeholder="Ej: 3">
+                                <input type="number" id="eggUnits" name="eggUnits" min="0" max="29" class="block w-full border-2 border-farm-green rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-farm-green focus:border-transparent transition-all duration-200 hover:border-farm-light-green" placeholder="Ej: 3 max. 29">
                                 <p class="text-xs text-farm-brown mt-1">*Cada bandeja consta de 30 unidades</p>
                             </div>
                         </div>

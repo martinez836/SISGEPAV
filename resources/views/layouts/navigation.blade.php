@@ -8,7 +8,7 @@
             {{-- GRUPO IZQUIERDO: Logo y Título --}}
             <div class="flex items-center">
                 <div class="shrink-0 flex items-center">
-                    <img src="{{ asset('images/Logo.jpg') }}" alt="logo Software" class="block h-10 w-auto" />
+                    <img src="{{ asset('images/Logo.png') }}" alt="logo Software" class="block h-10 w-auto" />
                 </div>
                 <h1 class="text-xl font-bold ms-3 text-green-700">SISGEPAV</h1>
             </div>

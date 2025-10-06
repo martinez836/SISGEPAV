@@ -1,6 +1,7 @@
 /* import DataTable from 'datatables.net-dt';
 import 'datatables.net-dt/css/dataTables.dataTables.css'; */
 
+const batchTableBody = document.querySelector('#batchTableBody');
 document.addEventListener('DOMContentLoaded', () => {
     // Reloj
     const timeElement = document.getElementById('current-time');
@@ -20,6 +21,23 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(updateClock, 1000);
     }
 
+    async function cargarHuevosHoy() {
+        try {
+            const response = await fetch('/huevos-hoy');
+            if (!response.ok) throw new Error('Error en la petición');
+
+            const data = await response.json();
+
+            // Seleccionar el <p> dentro del div y actualizarlo
+            document.querySelector('#huevosHoy').textContent = data.totalHuevos.toLocaleString();
+        } catch (error) {
+            console.error('Error cargando huevos de hoy:', error);
+        }
+    }
+
+    // Llamar la función al cargar la página
+    cargarHuevosHoy();
+
     // Sidebar
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
@@ -36,6 +54,50 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.classList.add('hidden');
         });
     }
+     async function loadBatches()
+    {
+        try {
+            const response = await fetch('/batches-json');
+            if(!response.ok)
+            {
+                throw new Error('Network response was not ok');
+            }
+            const batches = await response.json();
+            batchTableBody.innerHTML = '';
+            batches.forEach(batch => {
+                const row = document.createElement('tr');
+
+                const codeCell = document.createElement('td');
+                codeCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+                codeCell.textContent = batch.batchName;
+
+                const dateCell = document.createElement('td');
+                dateCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+                dateCell.textContent = new Date(batch.created_at).toLocaleDateString('es-CO', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+
+                const totalCell = document.createElement('td');
+                totalCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+                totalCell.textContent = batch.totalBatch;
+
+                const stateCell = document.createElement('td');
+                stateCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-900');
+                stateCell.textContent = batch.batch_state;
+
+                row.appendChild(codeCell);
+                row.appendChild(dateCell);
+                row.appendChild(totalCell);
+                row.appendChild(stateCell);
+                batchTableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching batches:', error);
+        }
+    }
+    loadBatches();
 
     // User dropdown
     const userMenuButton = document.getElementById('user-menu-button');

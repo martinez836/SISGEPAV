@@ -10,6 +10,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\RolController;
 use App\Constants\Roles;
+use App\Http\Controllers\BatchController;
+use App\Http\Controllers\ProductionChart;
 
 require __DIR__.'/auth.php';
 
@@ -17,6 +19,10 @@ require __DIR__.'/auth.php';
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+Route::get('/huevos-hoy', [BatchController::class, 'getBatchToday']);
+Route::get('/classification-by-month', [ProductionChart::class, 'classificationByMonth']);
+Route::get('/production-by-month', [ProductionChart::class, 'productionByMonth']);
 
 // rutas protegidas por autenticación y roles para recolector y administrador
 Route::middleware(['auth', 'role:' . Roles::RECOLECTOR])->group(function () {
@@ -50,6 +56,13 @@ Route::middleware(['auth', 'role:' . Roles::ADMINISTRADOR])->group(function () {
     Route::get('/roles',[RolController::class,'index'])->name('roles.index');
     Route::post('/roles',[RolController::class,'store']);
     Route::put('/roles/{id}',[RolController::class,'update'])->name('roles.update');
+
+    //Routes for batches
+    Route::get('/batches', [BatchController::class, 'index'])->name('batches.index');
+    Route::get('/batches-json', [BatchController::class, 'getBatches']);
+    Route::post('/batches', [BatchController::class, 'store']);
+    Route::put('/batches/{id}', [BatchController::class, 'update']);
+    Route::put('/batches/{id}/markCollection', [BatchController::class, 'markCollection']);
 
     //routes for classification
     /* Route::get('classification/create',       [ClassificationController::class,'create'])->name('classification.create');

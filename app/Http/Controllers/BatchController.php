@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Batch;
+use Carbon\Carbon;
 
 class BatchController extends Controller
 {
@@ -25,10 +26,22 @@ class BatchController extends Controller
                 'batchName' => $batch->batchName,
                 'totalBatch' => $batch->totalBatch,
                 'batch_state' => $batch->batchState ? $batch->batchState->state : '',
+                'created_at' => $batch->created_at,
             ];
         });
 
         return response()->json($batches);
+    }
+
+    public function getBatchToday()
+    {
+          // Traer la suma de huevos del lote de hoy
+        $totalHuevos = Batch::whereDate('created_at', Carbon::today())
+                            ->sum('totalBatch'); // <-- suponiendo que totalBatch guarda el número de huevos
+
+        return response()->json([
+            'totalHuevos' => $totalHuevos
+        ]);
     }
 
     /**

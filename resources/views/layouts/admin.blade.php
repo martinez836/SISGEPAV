@@ -18,7 +18,7 @@
 
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/dashboard.js'])
+    @vite(['resources/css/app.css', 'resources/js/dashboard.js','resources/js/graphics.js'])
 </head>
 <body class="font-sans antialiased bg-gray-50">
     @yield('content')

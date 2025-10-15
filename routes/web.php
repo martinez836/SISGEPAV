@@ -12,6 +12,7 @@ use App\Http\Controllers\RolController;
 use App\Constants\Roles;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ProductionChart;
+use App\Http\Controllers\NoveltiesController;
 
 require __DIR__.'/auth.php';
 
@@ -35,6 +36,10 @@ Route::middleware(['auth', 'role:' . Roles::RECOLECTOR])->group(function () {
 Route::middleware(['auth', 'role:' . Roles::ADMINISTRADOR])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/novelties', [NoveltiesController::class, 'index'])->name('novelties.index');
+    Route::get('/batches-by-date', [\App\Http\Controllers\NoveltiesController::class, 'batchesByDate'])->name('novelties.batchesByDate');
+
 
     //routes for users
     Route::get('/users', [UserController::class, 'index'])->name('users.index');

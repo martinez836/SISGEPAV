@@ -5,82 +5,8 @@
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <!-- Sidebar -->
-    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
-        <!-- Logo -->
-        <div class="flex items-center justify-center h-20 border-b border-gray-200">
-            <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-gradient-to-r rounded-full flex items-center justify-center">
-                    <img src="/images/Logo.jpg" alt="Logo SISGEPAV" class="rounded-full shadow-lg">
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold text-green-700">SISGEPAV</h2>
-                    <p class="text-xs text-gray-500">Sistema de Gestión Avícola</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="mt-8">
-            <div class="px-4">
-                <a href="/dashboard" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                    </svg>
-                    Dashboard
-                </a>
-            </div>
-            
-            <div class="px-4 mt-4 space-y-2">
-                <a href="/users" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Usuarios
-                </a>
-                
-                <a href="/farms" class="flex items-center px-4 py-3 text-green-700 bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H3.862a2 2 0 01-1.995-1.858L1 7m3 4v6m4-6v6m4-6v6M5 7V4a1 1 0 011-1h8a1 1 0 011 1v3M9 4v3h2V4"/>
-                    </svg>
-                    Granjas
-                </a>
-                
-                <a href="/roles" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
-                    </svg>
-                    Roles
-                </a>
-                
-                <a href="/batches" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM4 9a2 2 0 100 4h12a2 2 0 100-4H4zM4 15a2 2 0 100 4h12a2 2 0 100-4H4z"/>
-                    </svg>
-                    Lotes
-                </a>
-                
-                <a href="#" class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors duration-200">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M16 8v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8m8-4V2a1 1 0 00-1-1H9a1 1 0 00-1 1v2M8 6h4"/>
-                    </svg>
-                    Gráficas
-                </a>
-            </div>
-        </nav>
-
-        <!-- User info at bottom -->
-        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-            <div class="flex items-center">
-                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <span class="text-white text-sm font-medium">A</span>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name}}</p>
-                    <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    
+    @include('layouts.sidebar')
 
     <!-- Main Content -->
     <div class="lg:pl-64">

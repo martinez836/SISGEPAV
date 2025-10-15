@@ -20,7 +20,7 @@ class NoveltiesController extends Controller {
     private function buildData( Request $request ): array {
         $tz = 'America/Bogota';
 
-        // Fecha del filtro ( soporta 'YYYY-MM-DD' y 'DD/MM/YYYY' )
+        // Fecha del filtro
         $dateStr = $request->input( 'date' );
         if ( $dateStr && preg_match( '/^\d{2}\/\d{2}\/\d{4}$/', $dateStr ) ) {
             [ $d, $m, $y ] = explode( '/', $dateStr );
@@ -34,12 +34,12 @@ class NoveltiesController extends Controller {
         $batchId   = $request->integer( 'batch_id' ) ?: null;
         $batch     = $batchId ? \App\Models\Batch::find( $batchId ) : null;
 
-        // 👉 Lotes disponibles exclusivamente para la fecha escogida
+        // Lotes disponibles exclusivamente para la fecha escogida
         $batches = \App\Models\Batch::whereBetween( 'created_at', [ $from, $to ] )
         ->orderBy( 'batchName' )
         ->get( [ 'id', 'batchName' ] );
 
-        // 👉 Si NO hay lote elegido, no calculamos nada ( todo en 0 y tabla vacía )
+        // Si NO hay lote elegido, no calculamos nada ( todo en 0 y tabla vacía )
         if ( !$batchId ) {
             return [
                 'date'           => $date->format( 'Y-m-d' ),
@@ -68,12 +68,10 @@ class NoveltiesController extends Controller {
         $harvestBase = \App\Models\Harvest::query()
         ->when( !empty( $batchIds ), fn( $q ) => $q->whereIn( 'batch_id', $batchIds ) );
 
-        // 1 ) totalEggs en la fecha
         $recolectados = ( int ) $harvestBase->clone()
         ->whereBetween( 'created_at', [ $from, $to ] )
         ->sum( 'totalEggs' );
 
-        // 2 ) si totalEggs no está guardado, calcula bandejas * unidades
         if ( $recolectados === 0 ) {
             $recolectados = ( int ) $harvestBase->clone()
             ->whereBetween( 'created_at', [ $from, $to ] )
@@ -81,7 +79,6 @@ class NoveltiesController extends Controller {
             ->value( 't' );
         }
 
-        // 3 ) si hay lote elegido y sigue 0, repite sin fecha
         if ( $batchId && $recolectados === 0 ) {
             $recolectados = ( int ) \App\Models\Harvest::whereIn( 'batch_id', $batchIds )->sum( 'totalEggs' );
 
@@ -92,14 +89,12 @@ class NoveltiesController extends Controller {
             }
         }
 
-        // 5 ) último recurso: totalBatch del( los ) lote( s )
         if ( $recolectados === 0 && !empty( $batchIds ) ) {
             $recolectados = ( int ) \Illuminate\Support\Facades\DB::table( 'batches' )
             ->whereIn( 'id', $batchIds )
             ->sum( 'totalBatch' );
         }
 
-        // 3 ) Clasificados por categoría ( batch_details )
         $rows = \Illuminate\Support\Facades\DB::table( 'batch_details' )
         ->join( 'categories', 'batch_details.category_id', '=', 'categories.id' )
         ->selectRaw( 'UPPER(categories.categoryName) as name, COALESCE(SUM(batch_details.totalClassification),0) as total' )
@@ -108,7 +103,6 @@ class NoveltiesController extends Controller {
         ->groupBy( \Illuminate\Support\Facades\DB::raw( 'UPPER(categories.categoryName)' ) )
         ->get();
 
-        // Normaliza a las 5 llaves fijas
         $categorias = [ 'AAA'=>0, 'AA'=>0, 'A'=>0, 'SUPER'=>0, 'YEMAS'=>0 ];
         foreach ( $rows as $r ) {
             $n = $r->name;
@@ -126,7 +120,6 @@ class NoveltiesController extends Controller {
             }
         }
 
-        // Fallback sin fecha si hay lote seleccionado y todo quedó en 0
         if ( $batchId && array_sum( $categorias ) === 0 ) {
             $rows = \Illuminate\Support\Facades\DB::table( 'batch_details' )
             ->join( 'categories', 'batch_details.category_id', '=', 'categories.id' )
@@ -155,12 +148,10 @@ class NoveltiesController extends Controller {
 
         $clasificados = array_sum( $categorias );
 
-        // 4 ) fallback coherente con lo visto en pantalla
         if ( $recolectados === 0 ) {
             $recolectados = ( int ) ( $clasificados + $novedadesTotal );
         }
 
-        // 4 ) Novedades: siempre por fecha, si hay lote elegido, por batch_code también
         $novQuery = \App\Models\Novelty::query()
         ->whereBetween( 'created_at', [ $from, $to ] );
 
@@ -172,7 +163,6 @@ class NoveltiesController extends Controller {
         $novedades = $novQuery->orderByDesc( 'created_at' )
         ->get( [ 'created_at', 'batch_code', 'quantity', 'novelty', 'user_name' ] );
 
-        // 5 ) Para el select
         $batches = \App\Models\Batch::orderBy( 'batchName' )->get( [ 'id', 'batchName' ] );
 
         return [

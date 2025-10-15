@@ -1,4 +1,3 @@
-{{-- resources/views/admin/novelties.blade.php --}}
 @extends('layouts.novelties')
 
 @section('title', 'SISGEPAV - Novedades')
@@ -10,7 +9,7 @@
 
         {{-- Contenido principal --}}
         <div class="lg:pl-64">
-            {{-- Header superior igual al dashboard --}}
+            {{-- Header superior --}}
             <div class="bg-white shadow-sm border-b border-gray-200">
                 <div class="px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center h-16">
@@ -81,7 +80,7 @@
                     <div>
                         <button id="applyBtn" type="submit"
                             class="h-10 w-full md:w-auto px-4 rounded-md font-medium text-white
-                                   bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             {{ $batchId ? '' : 'disabled' }}>
                             Aplicar
                         </button>
@@ -154,7 +153,7 @@
             </main>
         </div>
 
-        {{-- Overlay móvil (igual al dashboard) --}}
+        {{-- Overlay  --}}
         <div class="fixed inset-0 z-40 lg:hidden bg-gray-600 bg-opacity-75 hidden" id="sidebar-overlay"></div>
     </div>
 @endsection
@@ -162,7 +161,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DataTables (si está disponible)
+            // DataTables
             if (window.jQuery && $.fn.DataTable) {
                 $('#noveltiesTable').DataTable({
                     pageLength: 10,
@@ -175,7 +174,6 @@
                 });
             }
 
-            // --- Dependencia Fecha -> Lotes (AJAX) ---
             const form = document.getElementById('filters');
             const dateInput = form.querySelector('input[name="date"]');
             const batchSel = document.getElementById('batch_id');

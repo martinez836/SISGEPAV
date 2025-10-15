@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    {{-- === NAVIGATION (reemplaza todo este bloque) === --}}
+    {{-- === NAVIGATION === --}}
     @php
         $link = fn($active) => $active
             ? 'flex items-center px-4 py-3 text-green-700 bg-green-50 rounded-lg transition-colors duration-200'
@@ -27,7 +27,7 @@
 
         $icon = fn($active) => $active ? 'w-5 h-5 mr-3 text-green-700' : 'w-5 h-5 mr-3 text-gray-500';
 
-        // Helper para evaluar la ruta actual cuando usas href absolutos (/users, /farms...)
+        // Helper para evaluar la ruta actual
         $is = fn(string $pattern) => request()->is($pattern);
     @endphp
 
@@ -79,7 +79,7 @@
                 Lotes
             </a>
 
-            {{-- Gráficas (si no hay ruta real, queda siempre inactivo) --}}
+            {{-- Gráficas --}}
             <a href="#" class="{{ $link(false) }}">
                 <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     stroke-width="1.8">
@@ -88,7 +88,7 @@
                 Gráficas
             </a>
 
-            {{-- Novedades (con icono nuevo) --}}
+            {{-- Novedades --}}
             <a href="/novelties" class="{{ $link($is('novelties') || $is('novelties/*')) }}">
                 <svg class="{{ $icon($is('novelties') || $is('novelties/*')) }}" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -103,7 +103,7 @@
     {{-- === /NAVIGATION === --}}
 
 
-    {{-- Usuario abajo --}}
+    {{-- Usuario --}}
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
         <div class="flex items-center">
             <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">

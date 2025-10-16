@@ -130,7 +130,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @forelse($novedades as $n)
+                                @foreach ($novedades as $n)
                                     <tr>
                                         <td class="px-4 py-2">
                                             {{ $n->created_at->setTimezone('America/Bogota')->format('d/m/Y H:i') }}</td>
@@ -139,14 +139,13 @@
                                         <td class="px-4 py-2">{{ $n->novelty }}</td>
                                         <td class="px-4 py-2">{{ $n->user_name }}</td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td class="px-4 py-6 text-center text-gray-500" colspan="5">
-                                            No hay novedades en el rango seleccionado.
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
+                            @if ($novedades->isEmpty())
+                                <div class="px-4 py-3 text-center text-sm text-gray-500">
+                                    No hay novedades en el rango seleccionado.
+                                </div>
+                            @endif
                         </table>
                     </div>
                 </div>
@@ -169,7 +168,8 @@
                         [0, 'desc']
                     ],
                     language: {
-                        url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                        url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json',
+                        emptyTable: 'No hay novedades en el rango seleccionado.'
                     }
                 });
             }

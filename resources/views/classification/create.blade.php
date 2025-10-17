@@ -17,19 +17,13 @@
                     @foreach ($batches as $b)
                         <option value="{{ $b->id }}"
                             {{ (string) $selectedBatch === (string) $b->id ? 'selected' : '' }}>
-                            {{ $b->batchName }} (ID: {{ $b->id }})
+                            {{ $b->batchName }}
                         </option>
                     @endforeach
                 </select>
                 <p class="text-xs text-gray-500 mt-1">La lista ya está filtrada automáticamente por estado
                     <b>Recolección</b>.
                 </p>
-            </div>
-            <div class="lg:justify-self-end">
-                <button type="submit"
-                    class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-900">
-                    Cargar lote
-                </button>
             </div>
         </form>
 
@@ -116,7 +110,7 @@
                         <input type="hidden" name="details[{{ $loop->index }}][category_id]"
                             value="{{ $c->id }}">
                         <input type="number" min="0" name="details[{{ $loop->index }}][totalClassification]"
-                            value="{{ old("details.$loop->index.totalClassification", 0) }}"
+                            value="{{ old("details.$loop->index.totalClassification") }}"
                             class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 cls-input"
                             {{ $isRemainder ? 'data-autofill=1 id=autofillInput' : '' }}>
 
@@ -383,4 +377,54 @@
         // Inicial
         recalc();
     </script>
+    <!-- SweetAlert2 (debe ir antes del resto de scripts que lo usan) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Confirmación al guardar clasificación -->
+    <script>
+        (function() {
+            const form = document.getElementById('clsForm');
+            if (!form) return;
+
+            let sending = false;
+
+            form.addEventListener('submit', function(e) {
+                if (sending) return;
+                e.preventDefault();
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Se aplicarán los cambios a la clasificación del lote.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, aplicar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed) {
+                        sending = true;
+                        form.submit();
+                    }
+                });
+            });
+        })();
+    </script>
+
+    {{-- Toast de éxito tras redirect con ->with('ok', '...') --}}
+    @if (session('ok'))
+        <script>
+            // Asegúrate de que SweetAlert2 ya esté cargado arriba
+            Swal.fire({
+                title: 'Listo',
+                text: @json(session('ok')),
+                icon: 'success',
+                timer: 2200,
+                showConfirmButton: false
+            });
+        </script>
+    @endif
 @endsection

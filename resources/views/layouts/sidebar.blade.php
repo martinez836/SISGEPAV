@@ -79,15 +79,6 @@
                 Lotes
             </a>
 
-            {{-- Gráficas --}}
-            <a href="#" class="{{ $link(false) }}">
-                <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                    stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 19h16M7 10v6m5-9v9m5-5v5" />
-                </svg>
-                Gráficas
-            </a>
-
             {{-- Novedades --}}
             <a href="/novelties" class="{{ $link($is('novelties') || $is('novelties/*')) }}">
                 <svg class="{{ $icon($is('novelties') || $is('novelties/*')) }}" fill="none" viewBox="0 0 24 24"
@@ -96,7 +87,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Novedades
+                Clasificacion
             </a>
         </div>
     </nav>

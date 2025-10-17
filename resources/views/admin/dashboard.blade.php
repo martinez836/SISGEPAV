@@ -23,7 +23,7 @@
                         </button>
                         <h1 class="ml-2 lg:ml-0 text-xl font-semibold text-gray-900">Dashboard</h1>
                     </div>
-                    
+                
                     <div class="flex items-center space-x-4">
                         <div class="hidden sm:block text-sm text-gray-500" id="current-time">
                             {{ date('d/m/Y H:i') }}

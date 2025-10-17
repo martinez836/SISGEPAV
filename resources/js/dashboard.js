@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.classList.add('hidden');
         });
     }
-     async function loadBatches()
+    async function loadBatches()
     {
         try {
             const response = await fetch('/batches-json');

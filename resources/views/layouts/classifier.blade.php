@@ -11,7 +11,11 @@
 <body class="bg-gray-50">
     <div class="min-h-screen">
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg">
+        <aside
+            class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg
+                   transform transition-transform duration-200
+                   -translate-x-full lg:translate-x-0 z-50">
+            <!-- ← clases añadidas para drawer -->
             <div class="h-20 border-b flex items-center px-4">
                 <img src="/images/Logo.jpg" class="w-10 h-10 rounded-full" alt="">
                 <div class="ml-3">
@@ -35,7 +39,7 @@
         </aside>
 
         <!-- Main -->
-        <main class="lg:pl-64">
+        <main class="pl-0 lg:pl-64"><!-- pl-0 explícito: móvil sin sangría, lg compensa sidebar -->
             <header class="bg-white border-b overflow-visible">
                 <div class="px-6 h-16 flex items-center justify-between">
                     <div class="flex items-center">
@@ -120,7 +124,6 @@
             if (open) return;
             open = true;
             menu.classList.remove('hidden');
-            // frame 1: visible pero en estado inicial
             requestAnimationFrame(() => {
                 menu.classList.remove('opacity-0', 'translate-y-1', 'pointer-events-none');
                 menu.classList.add('opacity-100', 'translate-y-0');
@@ -133,7 +136,7 @@
             menu.classList.remove('opacity-100', 'translate-y-0');
             menu.classList.add('opacity-0', 'translate-y-1', 'pointer-events-none');
             clearTimeout(t);
-            t = setTimeout(() => !open && menu.classList.add('hidden'), 200); // duration-200
+            t = setTimeout(() => !open && menu.classList.add('hidden'), 200);
         }
 
         btn.addEventListener('click', (e) => {
@@ -148,6 +151,48 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeMenu();
         });
+    })();
+
+    // === Drawer móvil (responsive) – sin cambiar tu estructura ===
+    (function() {
+        const aside = document.querySelector('aside');
+        const toggle = document.getElementById('sidebar-toggle');
+        const overlay = document.getElementById('sidebar-overlay');
+        if (!aside || !toggle || !overlay) return;
+
+        const mq = window.matchMedia('(min-width: 1024px)'); // lg
+
+        function openDrawer() {
+            aside.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeDrawer() {
+            aside.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function sync(e) {
+            if (e.matches) { // lg+
+                overlay.classList.add('hidden');
+                aside.classList.remove('-translate-x-full');
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                closeDrawer();
+            }
+        }
+
+        toggle.addEventListener('click', openDrawer);
+        overlay.addEventListener('click', closeDrawer);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeDrawer();
+        });
+
+        // Estado correcto al cargar/redimensionar
+        sync(mq);
+        mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync);
     })();
 </script>
 
